@@ -1,0 +1,20 @@
+Input folder = Example1
+Response file = expressions.csv
+Casename = trial
+Sample file = samples.txt
+
+Number of random variables = 1
+Moment order = 2
+
+Distribution type = beta
+Sample space = log
+
+Upper limit = 6.0
+Lower limit = -3.0
+
+Mean range = 0.0,4.0
+Std range = 0.5,3.5
+Landscape resolution = 30,30
+
+CDF error weight = 100.0
+Moment error weight = 1.0

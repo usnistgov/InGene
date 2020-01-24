@@ -24,6 +24,9 @@ def processOptions():
 if __name__ == '__main__':
     input_lines, flag, data_fractions, reps = processOptions()
 
+    current_dir = os.getcwd()
+    print(current_dir)
+
     #data_fractions = [1,2,5,10]#,20]
     samples = list(range(1,reps+1))
 
@@ -60,7 +63,7 @@ if __name__ == '__main__':
 
                 input_lines = copy.deepcopy(new_input_lines)
 
-            SEMIL_instance = SEMIL(input_lines,flag)
+            SEMIL_instance = SEMIL(current_dir,input_lines,flag)
 
             if df_i>0 or s_i>0:
                 SEMIL_instance.set_SROM_wts(wt_dict,wt_locs)
@@ -68,7 +71,6 @@ if __name__ == '__main__':
                 #sys.stdout.flush()
 
             if flag=='l':
-
                 SEMIL_instance.get_MI_landscape()
 
             if df_i==0 and s_i==0:

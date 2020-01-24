@@ -1,4 +1,4 @@
-import sys
+import sys, os
 from optparse import OptionParser
 from SEMIL import SEMIL
 
@@ -18,7 +18,10 @@ def processOptions():
 if __name__ == '__main__':
     input_lines, flag = processOptions()
 
-    MIL_instance = SEMIL(input_lines,flag)
+    current_dir = os.getcwd()
+    print(current_dir)
+
+    MIL_instance = SEMIL(current_dir,input_lines,flag)
 
     if flag=='l':
         MIL_instance.get_MI_landscape()

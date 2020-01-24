@@ -18,8 +18,8 @@ import matplotlib.colors as colors
 import copy
 
 class SEMIL(MakeInputDict):
-    def __init__(self,input_lines,_flag):
-        self.SROM_obj = SROMgenerator(input_lines)
+    def __init__(self,data_path,input_lines,_flag):
+        self.SROM_obj = SROMgenerator(data_path,input_lines)
 
         response_file = self.SROM_obj.input_folder+'/'+self.SROM_obj.input_dict['Response file']
         self.MI_instance = MIcalculator(response_file,len(self.SROM_obj.sample_locations))
@@ -35,6 +35,8 @@ class SEMIL(MakeInputDict):
         self.setup_bounds()
 
         os.chdir(self.SROM_obj.input_folder)
+
+        #self.SROM_obj.input_folder = os.getcwd()
 
     def set_SROM_wts(self,_wt_dicts,_wt_locs):
         self.provided_wts = True

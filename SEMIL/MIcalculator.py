@@ -50,10 +50,12 @@ class MIcalculator(MakeInputDict):
         #response_size = len(self.input_loc)
         response_size = self.input_size
 
+        loc_set = all_lines[0].rstrip('\r\n').split(',')
+
         for i in range(0,response_size):
             this_entropy = 0.0
-            loc_set = all_lines[2*i].rstrip('\r\n').split(',')
-            wt_set = all_lines[2*i+1].rstrip('\r\n').split(',')
+            #loc_set = all_lines[2*i].rstrip('\r\n').split(',')
+            wt_set = all_lines[i+1].rstrip('\r\n').split(',')
 
             self.response_pdfs[i] = {}
 

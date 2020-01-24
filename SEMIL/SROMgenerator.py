@@ -13,10 +13,9 @@ import string
 #from LogNormalDist import LogNormalDist
 from scipy.optimize import minimize
 from BetaDist import BetaDist
-from NormalDist import NormalDist
 
 class SROMgenerator(MakeInputDict):
-    def __init__(self,input_lines):
+    def __init__(self,data_path,input_lines):
         """ This function reads the lines from the input file and creates the dictionary of input quantities.
         Args:
             input_lines (list): The list of input data
@@ -25,7 +24,7 @@ class SROMgenerator(MakeInputDict):
 
         self.no_rand_variables = 1
 
-        self.input_folder = self.input_dict['Input folder']
+        self.input_folder = data_path+'/'+self.input_dict['Input folder']
         self.sample_file = self.input_dict['Sample file']                       # No. of samples for SROM
         self.total_moments = int(self.input_dict['Moment order'])                    # No. of moments
         #self.int_size = int(input_dict['Integration intervals'])              # intervals for numerical integration
