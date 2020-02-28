@@ -132,6 +132,7 @@ try:
     os.mkdir(dir_tag+tag)
 except OSError:
     pass
+
 os.chdir(dir_tag+tag)
 
 f = open('samples.txt','w')

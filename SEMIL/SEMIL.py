@@ -14,6 +14,7 @@ from scipy import optimize
 import matplotlib.pyplot as plt
 import scipy.special as sp
 from BetaDist import BetaDist
+from scipy.stats import beta
 import matplotlib.colors as colors
 import copy
 
@@ -63,6 +64,9 @@ class SEMIL(MakeInputDict):
 
         self.x0 = np.array([0.5*(self.mean_range[0]+self.mean_range[1]),0.5*(self.std_range[0]+self.std_range[1])])
 
+        self.MI_cutoff = math.log(len(self.SROM_obj.sample_locations))/math.log(2.0)
+        print(self.MI_cutoff)
+
         #self.all_bounds.append((0.5,2.0))
         #self.all_bounds.append((0.1,1.5))
 
@@ -89,7 +93,7 @@ class SEMIL(MakeInputDict):
         if self.flag=='l':
             return_value = MI
         else:
-            return_value = 0.5*(4-MI)**2
+            return_value = 0.5*(self.MI_cutoff-MI)**2
             print('MI track: ', MI,x0,return_value)	#self.SROM_obj.p_SROM
 
         return return_value
@@ -105,7 +109,7 @@ class SEMIL(MakeInputDict):
         #cons = [{'type':'eq','fun':self.consProb}]
         #cons = [{'type':'ineq','fun': lambda x: x[1] - x[0]*2}]
         #result = minimize(self.compute_MI,self.x0,(),'SLSQP',None,None,None,self.all_bounds,options={'ftol':1e-10,'eps':0.0002,'maxiter':1000})
-        result = minimize(self.compute_MI,self.x0,(),'TNC',None,None,None,self.all_bounds,None,options={'ftol':1e-16,'eps':0.005})
+        result = minimize(self.compute_MI,self.x0,(),'TNC',None,None,None,self.all_bounds,None,options={'ftol':1e-6,'eps':0.05})
 
         #result = optimize.differential_evolution(self.compute_MI,self.all_bounds,tol=0.01)
 
@@ -123,6 +127,8 @@ class SEMIL(MakeInputDict):
         print('C,Mean,Std',file=f)
         print(str(self.CC)+','+str(self.final_mu)+','+str(self.final_std),file=f)
         f.close()
+
+        self.write_optimal_input_distribution(self.final_mu,self.final_std)
 
     def display_result(self):
         #print self.final_mu, self.final_std
@@ -216,6 +222,30 @@ class SEMIL(MakeInputDict):
 
         fig.savefig(self.casename+'.pdf', bbox_inches='tight')
 
+    def write_optimal_input_distribution(self,m,s):
+        ub = self.SROM_obj.upper_lim
+        lb = self.SROM_obj.lower_lim
+
+        s_m = (m-lb)/(ub-lb)
+        s_v = (s**2)/((ub-lb)**2)
+
+        p = s_m*(s_m*(1-s_m)/s_v - 1)
+        q = (s_m*(1-s_m)/s_v - 1) - p
+
+        xx = np.linspace(0.0,1.0,1000)
+        sx = xx*(ub-lb) + lb
+        true_x = 10**sx
+        xcdf = beta.cdf(xx,p,q,0,1)
+        #xpdf = beta.pdf(xx,p,q,0,1)
+        xpdf = beta.pdf(sx,p,q,lb,(ub-lb))
+
+        opti_cdf = np.zeros(shape=(1000,3))
+        opti_cdf[:,0] = true_x
+        opti_cdf[:,1] = xcdf
+        opti_cdf[:,2] = xpdf
+
+        np.savetxt('cc_pdf.csv',opti_cdf,delimiter=',')
+
     def get_MI_landscape(self):
         if self.provided_wts==False:
             self.wt_dict = {}
@@ -245,7 +275,19 @@ class SEMIL(MakeInputDict):
             #print(i,j, 'completed')
             #sys.stdout.flush()
 
+        max_MI = np.max(MI_matrix)
+        coord = np.where(MI_matrix == max_MI)
+        m_max, s_max = mean_range[coord[0][0]], std_range[coord[1][0]]
+
         os.chdir(self.SROM_obj.input_folder)
+
+        self.write_optimal_input_distribution(m_max,s_max)
+
+        of = open('C-coord.txt','w')
+        print('C = ',max_MI,file=of)
+        print('Mean = '+str(10**m_max),file=of)
+        print('Std = '+str(10**s_max),file=of)
+        of.close()
 
         filename = self.casename+'_MI_landscape.csv'
         wfile = open(filename,'w')
