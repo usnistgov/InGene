@@ -1,6 +1,6 @@
 Input folder = Example2
-Response file = expressions1_1.csv
-Casename = trial1_1
+Response file = expressions.csv
+Casename = trial
 Sample file = samples.txt
 
 Number of random variables = 1

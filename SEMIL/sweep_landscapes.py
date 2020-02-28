@@ -27,6 +27,17 @@ if __name__ == '__main__':
     current_dir = os.getcwd()
     print(current_dir)
 
+    for l in input_lines:
+        if 'Response file' in l:
+            response_file = l.split(' = ')[1]
+            response_file = response_file.rstrip('\r\n').split('.')[0]
+        elif 'Casename' in l:
+            casename = l.split(' = ')[1]
+            casename = casename.rstrip('\r\n')
+
+    old_response_tag = response_file
+    old_case_tag = casename
+
     #data_fractions = [1,2,5,10]#,20]
     samples = list(range(1,reps+1))
 
@@ -44,24 +55,41 @@ if __name__ == '__main__':
 
             s = samples[s_i]
 
-            new_exp_tag = 'expressions'+df_str+'_'+str(s)
+            # new_exp_tag = 'expressions'+df_str+'_'+str(s)
+            # new_trial_tag = 'trial'+df_str+'_'+str(s)
 
-            new_trial_tag = 'trial'+df_str+'_'+str(s)
+            new_response_tag = response_file+df_str+'_'+str(s)
 
-            if df_i>0 or s_i>0:
-                new_input_lines = []
+            new_case_tag = casename+df_str+'_'+str(s)
 
-                for l in input_lines:
-                    #this_l = l.rstrip('\r\n')
-                    if old_exp_tag in l:
-                        l = l.replace(old_exp_tag,new_exp_tag)
+            new_input_lines = []
 
-                    if old_trial_tag in l:
-                        l = l.replace(old_trial_tag,new_trial_tag)
+            for l in input_lines:
+                #this_l = l.rstrip('\r\n')
+                if old_response_tag in l:
+                    l = l.replace(old_response_tag,new_response_tag)
 
-                    new_input_lines.append(l)
+                if old_case_tag in l:
+                    l = l.replace(old_case_tag,new_case_tag)
 
-                input_lines = copy.deepcopy(new_input_lines)
+                new_input_lines.append(l)
+
+            input_lines = copy.deepcopy(new_input_lines)
+
+            # if df_i>0 or s_i>0:
+            #     new_input_lines = []
+            #
+            #     for l in input_lines:
+            #         #this_l = l.rstrip('\r\n')
+            #         if old_exp_tag in l:
+            #             l = l.replace(old_exp_tag,new_exp_tag)
+            #
+            #         if old_trial_tag in l:
+            #             l = l.replace(old_trial_tag,new_trial_tag)
+            #
+            #         new_input_lines.append(l)
+            #
+            #     input_lines = copy.deepcopy(new_input_lines)
 
             SEMIL_instance = SEMIL(current_dir,input_lines,flag)
 
@@ -100,9 +128,9 @@ if __name__ == '__main__':
             #
             # os.system('python3 $INGENE/SEMIL/landmaker.py -i '+input_file+' -f '+flag)
 
-            print(new_exp_tag,' completed.')
+            print(new_response_tag,' completed.')
 
-            old_exp_tag = new_exp_tag
-            old_trial_tag = new_trial_tag
+            old_response_tag = new_response_tag
+            old_case_tag = new_case_tag
 
     #os.system('rm rinput.txt')

@@ -65,8 +65,7 @@ class SEMIL(MakeInputDict):
         self.x0 = np.array([0.5*(self.mean_range[0]+self.mean_range[1]),0.5*(self.std_range[0]+self.std_range[1])])
 
         self.MI_cutoff = math.log(len(self.SROM_obj.sample_locations))/math.log(2.0)
-        print(self.MI_cutoff)
-
+        
         #self.all_bounds.append((0.5,2.0))
         #self.all_bounds.append((0.1,1.5))
 
@@ -289,7 +288,7 @@ class SEMIL(MakeInputDict):
         print('Std = '+str(10**s_max),file=of)
         of.close()
 
-        filename = self.casename+'_MI_landscape.csv'
+        filename = 'MI_landscape-'+self.casename+'.csv'
         wfile = open(filename,'w')
         wfile.close()
 
